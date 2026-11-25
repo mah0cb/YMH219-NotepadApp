@@ -7,6 +7,7 @@ namespace NotepadApp.Forms;
 public partial class AnaForm : Form
 {
     private readonly NotYoneticisi _yonetici = new(new JsonNotDeposu());
+    private readonly TxtDisaAktarici _disaAktarici = new();
 
     /// <summary>Editörde açık olan not; null ise yeni not yazılıyor demektir.</summary>
     private Not? _seciliNot;
@@ -100,6 +101,21 @@ public partial class AnaForm : Form
         tslDurum.Text = "Not silindi (dosyaya yazmak için Kaydet)";
     }
 
+    private void btnDisaAktar_Click(object? sender, EventArgs e)
+    {
+        if (_seciliNot is null)
+        {
+            MessageBox.Show(this, "Önce listeden dışa aktarılacak notu seçin.", "Not Seçilmedi",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        if (DegisikliklerIcinOnayAl(listeyiDeKontrolEt: false))
+        {
+            DisaAktar(_seciliNot);
+        }
+    }
+
     private void mnuYenidenYukle_Click(object? sender, EventArgs e)
     {
         if (DegisikliklerIcinOnayAl(listeyiDeKontrolEt: true))
@@ -147,6 +163,31 @@ public partial class AnaForm : Form
         }
 
         return DosyayaYaz();
+    }
+
+    private void DisaAktar(Not not)
+    {
+        using var pencere = new SaveFileDialog
+        {
+            Title = "Notu Dışa Aktar",
+            Filter = "Metin dosyası (*.txt)|*.txt",
+            DefaultExt = "txt",
+            FileName = _disaAktarici.OnerilenDosyaAdi(not)
+        };
+        if (pencere.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        try
+        {
+            _disaAktarici.Aktar(not, pencere.FileName);
+            tslDurum.Text = "Not dışa aktarıldı";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            HataGoster("Dışa Aktarma Hatası", ex);
+        }
     }
 
     private bool DosyayaYaz()

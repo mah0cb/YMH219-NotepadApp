@@ -22,6 +22,7 @@ partial class AnaForm
         mnuYeniNot = new ToolStripMenuItem();
         mnuKaydet = new ToolStripMenuItem();
         mnuYenidenYukle = new ToolStripMenuItem();
+        mnuDisaAktar = new ToolStripMenuItem();
         mnuAyrac = new ToolStripSeparator();
         mnuCikis = new ToolStripMenuItem();
         stsDurum = new StatusStrip();
@@ -43,6 +44,7 @@ partial class AnaForm
         btnYeni = new Button();
         btnKaydet = new Button();
         btnSil = new Button();
+        btnDisaAktar = new Button();
         mnuAna.SuspendLayout();
         stsDurum.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)splAna).BeginInit();
@@ -64,7 +66,7 @@ partial class AnaForm
         //
         // mnuDosya
         //
-        mnuDosya.DropDownItems.AddRange(new ToolStripItem[] { mnuYeniNot, mnuKaydet, mnuYenidenYukle, mnuAyrac, mnuCikis });
+        mnuDosya.DropDownItems.AddRange(new ToolStripItem[] { mnuYeniNot, mnuKaydet, mnuYenidenYukle, mnuDisaAktar, mnuAyrac, mnuCikis });
         mnuDosya.Name = "mnuDosya";
         mnuDosya.Size = new Size(51, 20);
         mnuDosya.Text = "&Dosya";
@@ -91,6 +93,13 @@ partial class AnaForm
         mnuYenidenYukle.Size = new Size(180, 22);
         mnuYenidenYukle.Text = "Yeniden Y&ükle";
         mnuYenidenYukle.Click += mnuYenidenYukle_Click;
+        //
+        // mnuDisaAktar
+        //
+        mnuDisaAktar.Name = "mnuDisaAktar";
+        mnuDisaAktar.Size = new Size(180, 22);
+        mnuDisaAktar.Text = "Dışa &Aktar (.txt)...";
+        mnuDisaAktar.Click += btnDisaAktar_Click;
         //
         // mnuAyrac
         //
@@ -271,6 +280,7 @@ partial class AnaForm
         flpButonlar.Controls.Add(btnYeni);
         flpButonlar.Controls.Add(btnKaydet);
         flpButonlar.Controls.Add(btnSil);
+        flpButonlar.Controls.Add(btnDisaAktar);
         flpButonlar.Dock = DockStyle.Fill;
         flpButonlar.Location = new Point(0, 506);
         flpButonlar.Margin = new Padding(0);
@@ -307,6 +317,16 @@ partial class AnaForm
         btnSil.Text = "Sil";
         btnSil.UseVisualStyleBackColor = true;
         btnSil.Click += btnSil_Click;
+        //
+        // btnDisaAktar
+        //
+        btnDisaAktar.Location = new Point(321, 3);
+        btnDisaAktar.Name = "btnDisaAktar";
+        btnDisaAktar.Size = new Size(140, 32);
+        btnDisaAktar.TabIndex = 3;
+        btnDisaAktar.Text = "Dışa Aktar (.txt)";
+        btnDisaAktar.UseVisualStyleBackColor = true;
+        btnDisaAktar.Click += btnDisaAktar_Click;
         //
         // AnaForm
         //
@@ -347,6 +367,7 @@ partial class AnaForm
     private ToolStripMenuItem mnuYeniNot;
     private ToolStripMenuItem mnuKaydet;
     private ToolStripMenuItem mnuYenidenYukle;
+    private ToolStripMenuItem mnuDisaAktar;
     private ToolStripSeparator mnuAyrac;
     private ToolStripMenuItem mnuCikis;
     private StatusStrip stsDurum;
@@ -368,4 +389,5 @@ partial class AnaForm
     private Button btnYeni;
     private Button btnKaydet;
     private Button btnSil;
+    private Button btnDisaAktar;
 }
