@@ -52,6 +52,11 @@ partial class AnaForm
         btnKaydet = new Button();
         btnSil = new Button();
         btnDisaAktar = new Button();
+        chkOtomatikKaydet = new CheckBox();
+        flpBicim = new FlowLayoutPanel();
+        btnKalin = new Button();
+        btnItalik = new Button();
+        btnAltiCizili = new Button();
         mnuAna.SuspendLayout();
         stsDurum.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)splAna).BeginInit();
@@ -60,6 +65,7 @@ partial class AnaForm
         splAna.SuspendLayout();
         tlpListe.SuspendLayout();
         tlpEditor.SuspendLayout();
+        flpBicim.SuspendLayout();
         flpTarihler.SuspendLayout();
         flpButonlar.SuspendLayout();
         SuspendLayout();
@@ -257,13 +263,15 @@ partial class AnaForm
         tlpEditor.Controls.Add(lblKategori, 0, 2);
         tlpEditor.Controls.Add(cmbKategori, 0, 3);
         tlpEditor.Controls.Add(lblIcerik, 0, 4);
-        tlpEditor.Controls.Add(rtbIcerik, 0, 5);
-        tlpEditor.Controls.Add(flpTarihler, 0, 6);
-        tlpEditor.Controls.Add(flpButonlar, 0, 7);
+        tlpEditor.Controls.Add(flpBicim, 0, 5);
+        tlpEditor.Controls.Add(rtbIcerik, 0, 6);
+        tlpEditor.Controls.Add(flpTarihler, 0, 7);
+        tlpEditor.Controls.Add(flpButonlar, 0, 8);
         tlpEditor.Dock = DockStyle.Fill;
         tlpEditor.Location = new Point(8, 8);
         tlpEditor.Name = "tlpEditor";
-        tlpEditor.RowCount = 8;
+        tlpEditor.RowCount = 9;
+        tlpEditor.RowStyles.Add(new RowStyle());
         tlpEditor.RowStyles.Add(new RowStyle());
         tlpEditor.RowStyles.Add(new RowStyle());
         tlpEditor.RowStyles.Add(new RowStyle());
@@ -326,10 +334,10 @@ partial class AnaForm
         //
         rtbIcerik.AcceptsTab = true;
         rtbIcerik.Dock = DockStyle.Fill;
-        rtbIcerik.Location = new Point(3, 106);
+        rtbIcerik.Location = new Point(3, 140);
         rtbIcerik.Name = "rtbIcerik";
-        rtbIcerik.Size = new Size(658, 376);
-        rtbIcerik.TabIndex = 5;
+        rtbIcerik.Size = new Size(658, 342);
+        rtbIcerik.TabIndex = 6;
         rtbIcerik.Text = "";
         rtbIcerik.TextChanged += Editor_Degisti;
         //
@@ -342,7 +350,7 @@ partial class AnaForm
         flpTarihler.Location = new Point(3, 488);
         flpTarihler.Name = "flpTarihler";
         flpTarihler.Size = new Size(658, 15);
-        flpTarihler.TabIndex = 6;
+        flpTarihler.TabIndex = 7;
         //
         // lblOlusturma
         //
@@ -371,12 +379,13 @@ partial class AnaForm
         flpButonlar.Controls.Add(btnKaydet);
         flpButonlar.Controls.Add(btnSil);
         flpButonlar.Controls.Add(btnDisaAktar);
+        flpButonlar.Controls.Add(chkOtomatikKaydet);
         flpButonlar.Dock = DockStyle.Fill;
         flpButonlar.Location = new Point(0, 506);
         flpButonlar.Margin = new Padding(0);
         flpButonlar.Name = "flpButonlar";
         flpButonlar.Size = new Size(664, 41);
-        flpButonlar.TabIndex = 7;
+        flpButonlar.TabIndex = 8;
         //
         // btnYeni
         //
@@ -418,6 +427,64 @@ partial class AnaForm
         btnDisaAktar.UseVisualStyleBackColor = true;
         btnDisaAktar.Click += btnDisaAktar_Click;
         //
+        // chkOtomatikKaydet
+        //
+        chkOtomatikKaydet.AutoSize = true;
+        chkOtomatikKaydet.Location = new Point(473, 10);
+        chkOtomatikKaydet.Margin = new Padding(9, 10, 3, 3);
+        chkOtomatikKaydet.Name = "chkOtomatikKaydet";
+        chkOtomatikKaydet.Size = new Size(115, 19);
+        chkOtomatikKaydet.TabIndex = 4;
+        chkOtomatikKaydet.Text = "Otomatik kaydet";
+        chkOtomatikKaydet.UseVisualStyleBackColor = true;
+        chkOtomatikKaydet.CheckedChanged += chkOtomatikKaydet_CheckedChanged;
+        //
+        // flpBicim
+        //
+        flpBicim.AutoSize = true;
+        flpBicim.Controls.Add(btnKalin);
+        flpBicim.Controls.Add(btnItalik);
+        flpBicim.Controls.Add(btnAltiCizili);
+        flpBicim.Dock = DockStyle.Fill;
+        flpBicim.Location = new Point(0, 103);
+        flpBicim.Margin = new Padding(0);
+        flpBicim.Name = "flpBicim";
+        flpBicim.Size = new Size(664, 34);
+        flpBicim.TabIndex = 5;
+        //
+        // btnKalin
+        //
+        btnKalin.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        btnKalin.Location = new Point(3, 3);
+        btnKalin.Name = "btnKalin";
+        btnKalin.Size = new Size(70, 28);
+        btnKalin.TabIndex = 0;
+        btnKalin.Text = "Kalın";
+        btnKalin.UseVisualStyleBackColor = true;
+        btnKalin.Click += btnKalin_Click;
+        //
+        // btnItalik
+        //
+        btnItalik.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+        btnItalik.Location = new Point(79, 3);
+        btnItalik.Name = "btnItalik";
+        btnItalik.Size = new Size(70, 28);
+        btnItalik.TabIndex = 1;
+        btnItalik.Text = "İtalik";
+        btnItalik.UseVisualStyleBackColor = true;
+        btnItalik.Click += btnItalik_Click;
+        //
+        // btnAltiCizili
+        //
+        btnAltiCizili.Font = new Font("Segoe UI", 9F, FontStyle.Underline);
+        btnAltiCizili.Location = new Point(155, 3);
+        btnAltiCizili.Name = "btnAltiCizili";
+        btnAltiCizili.Size = new Size(80, 28);
+        btnAltiCizili.TabIndex = 2;
+        btnAltiCizili.Text = "Altı çizili";
+        btnAltiCizili.UseVisualStyleBackColor = true;
+        btnAltiCizili.Click += btnAltiCizili_Click;
+        //
         // AnaForm
         //
         AutoScaleDimensions = new SizeF(7F, 15F);
@@ -445,9 +512,11 @@ partial class AnaForm
         tlpListe.PerformLayout();
         tlpEditor.ResumeLayout(false);
         tlpEditor.PerformLayout();
+        flpBicim.ResumeLayout(false);
         flpTarihler.ResumeLayout(false);
         flpTarihler.PerformLayout();
         flpButonlar.ResumeLayout(false);
+        flpButonlar.PerformLayout();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -489,4 +558,9 @@ partial class AnaForm
     private Button btnKaydet;
     private Button btnSil;
     private Button btnDisaAktar;
+    private CheckBox chkOtomatikKaydet;
+    private FlowLayoutPanel flpBicim;
+    private Button btnKalin;
+    private Button btnItalik;
+    private Button btnAltiCizili;
 }

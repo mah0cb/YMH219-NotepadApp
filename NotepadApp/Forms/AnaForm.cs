@@ -10,6 +10,7 @@ public partial class AnaForm : Form
 
     private readonly NotYoneticisi _yonetici = new(new JsonNotDeposu());
     private readonly TxtDisaAktarici _disaAktarici = new();
+    private readonly MetinBicimleyici _bicimleyici = new();
 
     /// <summary>Editörde açık olan not; null ise yeni not yazılıyor demektir.</summary>
     private Not? _seciliNot;
@@ -109,7 +110,42 @@ public partial class AnaForm : Form
         Guid silinecekId = _seciliNot.Id;
         EditoruDoldur(null);
         _yonetici.Sil(silinecekId);
-        tslDurum.Text = "Not silindi (dosyaya yazmak için Kaydet)";
+        if (!chkOtomatikKaydet.Checked)
+        {
+            tslDurum.Text = "Not silindi (dosyaya yazmak için Kaydet)";
+        }
+        else if (DosyayaYaz())
+        {
+            tslDurum.Text = "Not silindi";
+        }
+    }
+
+    private void btnKalin_Click(object? sender, EventArgs e) => BicimUygula(FontStyle.Bold);
+
+    private void btnItalik_Click(object? sender, EventArgs e) => BicimUygula(FontStyle.Italic);
+
+    private void btnAltiCizili_Click(object? sender, EventArgs e) => BicimUygula(FontStyle.Underline);
+
+    private void BicimUygula(FontStyle bicim)
+    {
+        bool metinSecili = rtbIcerik.SelectionLength > 0;
+        _editorDolduruluyor = true;
+        _bicimleyici.BicimDegistir(rtbIcerik, bicim);
+        _editorDolduruluyor = false;
+        rtbIcerik.Focus();
+
+        if (metinSecili)
+        {
+            Editor_Degisti(rtbIcerik, EventArgs.Empty);
+        }
+    }
+
+    private void chkOtomatikKaydet_CheckedChanged(object? sender, EventArgs e)
+    {
+        if (chkOtomatikKaydet.Checked && _yonetici.KaydedilmemisDegisiklikVar)
+        {
+            DosyayaYaz();
+        }
     }
 
     private void btnDisaAktar_Click(object? sender, EventArgs e)
@@ -235,6 +271,7 @@ public partial class AnaForm : Form
             {
                 Baslik = txtBaslik.Text,
                 Icerik = rtbIcerik.Text,
+                IcerikRtf = rtbIcerik.Rtf ?? string.Empty,
                 Kategori = cmbKategori.Text,
                 OlusturmaTarihi = simdi,
                 DuzenlemeTarihi = simdi
@@ -244,7 +281,7 @@ public partial class AnaForm : Form
         else
         {
             _yonetici.Guncelle(_seciliNot.Id, txtBaslik.Text, rtbIcerik.Text,
-                _seciliNot.IcerikRtf, cmbKategori.Text);
+                rtbIcerik.Rtf ?? string.Empty, cmbKategori.Text);
         }
 
         KategoriyiGoster(_seciliNot.Kategori);
@@ -256,6 +293,13 @@ public partial class AnaForm : Form
     /// <summary>Kaydedilmemiş değişiklik varsa kullanıcıya sorar. İşleme devam edilebilirse true döner.</summary>
     private bool DegisikliklerIcinOnayAl(bool listeyiDeKontrolEt)
     {
+        // Otomatik kayıt sormadan dener; başlık boşsa veya dosya yazılamazsa karar kullanıcıya bırakılır.
+        bool basliksizDegisiklik = _editorDegisti && string.IsNullOrWhiteSpace(txtBaslik.Text);
+        if (chkOtomatikKaydet.Checked && !basliksizDegisiklik && Kaydet())
+        {
+            return true;
+        }
+
         bool degisiklikVar = _editorDegisti
             || (listeyiDeKontrolEt && _yonetici.KaydedilmemisDegisiklikVar);
         if (!degisiklikVar)
@@ -279,7 +323,7 @@ public partial class AnaForm : Form
         _editorDolduruluyor = true;
         _seciliNot = not;
         txtBaslik.Text = not?.Baslik ?? string.Empty;
-        rtbIcerik.Text = not?.Icerik ?? string.Empty;
+        _bicimleyici.IcerigiGoster(rtbIcerik, not?.IcerikRtf ?? string.Empty, not?.Icerik ?? string.Empty);
         _editorDolduruluyor = false;
         KategoriyiGoster(not?.Kategori ?? Not.VarsayilanKategori);
 
