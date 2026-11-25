@@ -9,9 +9,52 @@ public class NotYoneticisi
     private static readonly CompareInfo TurkceKarsilastirma = new CultureInfo("tr-TR").CompareInfo;
 
     private readonly List<Not> _notlar = new();
+    private readonly INotDeposu _depo;
+    private bool _yuklemeBasarili;
+
+    public NotYoneticisi(INotDeposu depo)
+    {
+        _depo = depo;
+    }
 
     /// <summary>Not listesi her değiştiğinde tetiklenir.</summary>
     public event EventHandler? NotlarDegisti;
+
+    /// <summary>Bellekte olup henüz dosyaya yazılmamış değişiklik var mı?</summary>
+    public bool KaydedilmemisDegisiklikVar { get; private set; }
+
+    public DateTime? SonKayitZamani { get; private set; }
+
+    public string DosyaYolu => _depo.DosyaYolu;
+
+    /// <summary>Notları depodan okur ve listenin yerine koyar.</summary>
+    public YuklemeSonucu Yukle()
+    {
+        _yuklemeBasarili = false;
+        YuklemeSonucu sonuc = _depo.Yukle();
+        _yuklemeBasarili = true;
+
+        _notlar.Clear();
+        _notlar.AddRange(sonuc.Notlar);
+        KaydedilmemisDegisiklikVar = false;
+        NotlarDegisti?.Invoke(this, EventArgs.Empty);
+        return sonuc;
+    }
+
+    /// <summary>Listeyi depoya yazar. Yükleme başarısız olduysa eski notlar ezilmesin diye kaydetmez.</summary>
+    public void Kaydet()
+    {
+        if (!_yuklemeBasarili)
+        {
+            throw new NotDeposuException(
+                "Not dosyası okunamadığı için kaydetme kapalı; aksi halde eski notların üzerine yazılırdı.\n" +
+                "Sorunu giderip Dosya > Yeniden Yükle'yi seçin.");
+        }
+
+        _depo.Kaydet(_notlar);
+        KaydedilmemisDegisiklikVar = false;
+        SonKayitZamani = DateTime.Now;
+    }
 
     public void Ekle(Not not)
     {
@@ -69,5 +112,9 @@ public class NotYoneticisi
     private static bool MetinEsit(string a, string b) =>
         TurkceKarsilastirma.Compare(a, b, CompareOptions.IgnoreCase) == 0;
 
-    private void DegisikligiBildir() => NotlarDegisti?.Invoke(this, EventArgs.Empty);
+    private void DegisikligiBildir()
+    {
+        KaydedilmemisDegisiklikVar = true;
+        NotlarDegisti?.Invoke(this, EventArgs.Empty);
+    }
 }

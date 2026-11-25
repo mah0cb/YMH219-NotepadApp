@@ -27,6 +27,7 @@ partial class AnaForm
         Name = "AnaForm";
         StartPosition = FormStartPosition.CenterScreen;
         Text = "Not Defteri";
+        Load += AnaForm_Load;
         ResumeLayout(false);
     }
 
