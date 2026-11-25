@@ -6,6 +6,8 @@ namespace NotepadApp.Forms;
 /// <summary>Not defterinin ana penceresi; yalnızca arayüz ve olay bağlama işini yapar.</summary>
 public partial class AnaForm : Form
 {
+    private const string TumKategoriler = "Tümü";
+
     private readonly NotYoneticisi _yonetici = new(new JsonNotDeposu());
     private readonly TxtDisaAktarici _disaAktarici = new();
 
@@ -27,6 +29,7 @@ public partial class AnaForm : Form
     {
         tslDosyaYolu.Text = _yonetici.DosyaYolu;
         EditoruDoldur(null);
+        ListeyiYenile();
         Activate();
         NotlariYukle();
     }
@@ -54,6 +57,14 @@ public partial class AnaForm : Form
         }
 
         ListedeSec(_seciliNot);
+    }
+
+    private void Filtre_Degisti(object? sender, EventArgs e)
+    {
+        if (!_listeDolduruluyor)
+        {
+            ListeyiYenile();
+        }
     }
 
     private void Editor_Degisti(object? sender, EventArgs e)
@@ -224,6 +235,7 @@ public partial class AnaForm : Form
             {
                 Baslik = txtBaslik.Text,
                 Icerik = rtbIcerik.Text,
+                Kategori = cmbKategori.Text,
                 OlusturmaTarihi = simdi,
                 DuzenlemeTarihi = simdi
             };
@@ -232,8 +244,10 @@ public partial class AnaForm : Form
         else
         {
             _yonetici.Guncelle(_seciliNot.Id, txtBaslik.Text, rtbIcerik.Text,
-                _seciliNot.IcerikRtf, _seciliNot.Kategori);
+                _seciliNot.IcerikRtf, cmbKategori.Text);
         }
+
+        KategoriyiGoster(_seciliNot.Kategori);
 
         TarihleriGoster();
         return true;
@@ -267,10 +281,18 @@ public partial class AnaForm : Form
         txtBaslik.Text = not?.Baslik ?? string.Empty;
         rtbIcerik.Text = not?.Icerik ?? string.Empty;
         _editorDolduruluyor = false;
+        KategoriyiGoster(not?.Kategori ?? Not.VarsayilanKategori);
 
         _editorDegisti = false;
         TarihleriGoster();
         DurumCubugunuGuncelle();
+    }
+
+    private void KategoriyiGoster(string kategori)
+    {
+        _editorDolduruluyor = true;
+        cmbKategori.Text = kategori;
+        _editorDolduruluyor = false;
     }
 
     private void TarihleriGoster()
@@ -281,12 +303,37 @@ public partial class AnaForm : Form
 
     private static string TarihMetni(DateTime? tarih) => tarih?.ToString("dd.MM.yyyy HH:mm:ss") ?? "-";
 
+    /// <summary>Kategori kutularını, kullanıcının seçimini koruyarak yeniden doldurur.</summary>
+    private void KategorileriYenile()
+    {
+        object[] kategoriler = _yonetici.Kategoriler().ToArray<object>();
+
+        _listeDolduruluyor = true;
+        object? seciliFiltre = cmbKategoriFiltre.SelectedItem;
+        cmbKategoriFiltre.Items.Clear();
+        cmbKategoriFiltre.Items.Add(TumKategoriler);
+        cmbKategoriFiltre.Items.AddRange(kategoriler);
+        int filtreSirasi = seciliFiltre is null ? 0 : cmbKategoriFiltre.Items.IndexOf(seciliFiltre);
+        cmbKategoriFiltre.SelectedIndex = Math.Max(0, filtreSirasi);
+        _listeDolduruluyor = false;
+
+        string yazilanKategori = cmbKategori.Text;
+        _editorDolduruluyor = true;
+        cmbKategori.Items.Clear();
+        cmbKategori.Items.AddRange(kategoriler);
+        _editorDolduruluyor = false;
+        KategoriyiGoster(yazilanKategori);
+    }
+
     private void ListeyiYenile()
     {
+        KategorileriYenile();
+        string? kategori = cmbKategoriFiltre.SelectedIndex > 0 ? cmbKategoriFiltre.Text : null;
+
         _listeDolduruluyor = true;
         lstNotlar.BeginUpdate();
         lstNotlar.Items.Clear();
-        foreach (Not not in _yonetici.Ara(string.Empty, null))
+        foreach (Not not in _yonetici.Ara(txtArama.Text, kategori))
         {
             lstNotlar.Items.Add(not);
         }
@@ -306,7 +353,10 @@ public partial class AnaForm : Form
 
     private void DurumCubugunuGuncelle()
     {
-        tslNotSayisi.Text = $"Not sayısı: {_yonetici.Tumu().Count}";
+        int toplam = _yonetici.Tumu().Count;
+        tslNotSayisi.Text = lstNotlar.Items.Count == toplam
+            ? $"Not sayısı: {toplam}"
+            : $"Not sayısı: {lstNotlar.Items.Count} / {toplam}";
         tslSonKayit.Text = $"Son kayıt: {_yonetici.SonKayitZamani?.ToString("HH:mm:ss") ?? "-"}";
         tslDurum.Text = _editorDegisti || _yonetici.KaydedilmemisDegisiklikVar
             ? "Kaydedilmemiş değişiklik var"

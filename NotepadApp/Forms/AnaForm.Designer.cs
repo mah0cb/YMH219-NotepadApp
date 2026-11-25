@@ -32,6 +32,13 @@ partial class AnaForm
         tslSonKayit = new ToolStripStatusLabel();
         splAna = new SplitContainer();
         lstNotlar = new ListBox();
+        tlpListe = new TableLayoutPanel();
+        lblArama = new Label();
+        txtArama = new TextBox();
+        lblKategoriFiltre = new Label();
+        cmbKategoriFiltre = new ComboBox();
+        lblKategori = new Label();
+        cmbKategori = new ComboBox();
         tlpEditor = new TableLayoutPanel();
         lblBaslik = new Label();
         txtBaslik = new TextBox();
@@ -51,6 +58,7 @@ partial class AnaForm
         splAna.Panel1.SuspendLayout();
         splAna.Panel2.SuspendLayout();
         splAna.SuspendLayout();
+        tlpListe.SuspendLayout();
         tlpEditor.SuspendLayout();
         flpTarihler.SuspendLayout();
         flpButonlar.SuspendLayout();
@@ -158,7 +166,7 @@ partial class AnaForm
         //
         // splAna.Panel1
         //
-        splAna.Panel1.Controls.Add(lstNotlar);
+        splAna.Panel1.Controls.Add(tlpListe);
         splAna.Panel1.Padding = new Padding(8);
         //
         // splAna.Panel2
@@ -169,16 +177,75 @@ partial class AnaForm
         splAna.SplitterDistance = 300;
         splAna.TabIndex = 1;
         //
+        // tlpListe
+        //
+        tlpListe.ColumnCount = 1;
+        tlpListe.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        tlpListe.Controls.Add(lblArama, 0, 0);
+        tlpListe.Controls.Add(txtArama, 0, 1);
+        tlpListe.Controls.Add(lblKategoriFiltre, 0, 2);
+        tlpListe.Controls.Add(cmbKategoriFiltre, 0, 3);
+        tlpListe.Controls.Add(lstNotlar, 0, 4);
+        tlpListe.Dock = DockStyle.Fill;
+        tlpListe.Location = new Point(8, 8);
+        tlpListe.Name = "tlpListe";
+        tlpListe.RowCount = 5;
+        tlpListe.RowStyles.Add(new RowStyle());
+        tlpListe.RowStyles.Add(new RowStyle());
+        tlpListe.RowStyles.Add(new RowStyle());
+        tlpListe.RowStyles.Add(new RowStyle());
+        tlpListe.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        tlpListe.Size = new Size(284, 547);
+        tlpListe.TabIndex = 0;
+        //
+        // lblArama
+        //
+        lblArama.AutoSize = true;
+        lblArama.Location = new Point(3, 0);
+        lblArama.Name = "lblArama";
+        lblArama.Size = new Size(123, 15);
+        lblArama.TabIndex = 0;
+        lblArama.Text = "Ara (başlık veya içerik)";
+        //
+        // txtArama
+        //
+        txtArama.Dock = DockStyle.Fill;
+        txtArama.Location = new Point(3, 18);
+        txtArama.Name = "txtArama";
+        txtArama.Size = new Size(278, 23);
+        txtArama.TabIndex = 1;
+        txtArama.TextChanged += Filtre_Degisti;
+        //
+        // lblKategoriFiltre
+        //
+        lblKategoriFiltre.AutoSize = true;
+        lblKategoriFiltre.Location = new Point(3, 44);
+        lblKategoriFiltre.Name = "lblKategoriFiltre";
+        lblKategoriFiltre.Size = new Size(84, 15);
+        lblKategoriFiltre.TabIndex = 2;
+        lblKategoriFiltre.Text = "Kategori filtresi";
+        //
+        // cmbKategoriFiltre
+        //
+        cmbKategoriFiltre.Dock = DockStyle.Fill;
+        cmbKategoriFiltre.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbKategoriFiltre.FormattingEnabled = true;
+        cmbKategoriFiltre.Location = new Point(3, 62);
+        cmbKategoriFiltre.Name = "cmbKategoriFiltre";
+        cmbKategoriFiltre.Size = new Size(278, 23);
+        cmbKategoriFiltre.TabIndex = 3;
+        cmbKategoriFiltre.SelectedIndexChanged += Filtre_Degisti;
+        //
         // lstNotlar
         //
         lstNotlar.Dock = DockStyle.Fill;
         lstNotlar.FormattingEnabled = true;
         lstNotlar.HorizontalScrollbar = true;
         lstNotlar.IntegralHeight = false;
-        lstNotlar.Location = new Point(8, 8);
+        lstNotlar.Location = new Point(3, 91);
         lstNotlar.Name = "lstNotlar";
-        lstNotlar.Size = new Size(284, 547);
-        lstNotlar.TabIndex = 0;
+        lstNotlar.Size = new Size(278, 453);
+        lstNotlar.TabIndex = 4;
         lstNotlar.SelectedIndexChanged += lstNotlar_SelectedIndexChanged;
         //
         // tlpEditor
@@ -187,14 +254,18 @@ partial class AnaForm
         tlpEditor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         tlpEditor.Controls.Add(lblBaslik, 0, 0);
         tlpEditor.Controls.Add(txtBaslik, 0, 1);
-        tlpEditor.Controls.Add(lblIcerik, 0, 2);
-        tlpEditor.Controls.Add(rtbIcerik, 0, 3);
-        tlpEditor.Controls.Add(flpTarihler, 0, 4);
-        tlpEditor.Controls.Add(flpButonlar, 0, 5);
+        tlpEditor.Controls.Add(lblKategori, 0, 2);
+        tlpEditor.Controls.Add(cmbKategori, 0, 3);
+        tlpEditor.Controls.Add(lblIcerik, 0, 4);
+        tlpEditor.Controls.Add(rtbIcerik, 0, 5);
+        tlpEditor.Controls.Add(flpTarihler, 0, 6);
+        tlpEditor.Controls.Add(flpButonlar, 0, 7);
         tlpEditor.Dock = DockStyle.Fill;
         tlpEditor.Location = new Point(8, 8);
         tlpEditor.Name = "tlpEditor";
-        tlpEditor.RowCount = 6;
+        tlpEditor.RowCount = 8;
+        tlpEditor.RowStyles.Add(new RowStyle());
+        tlpEditor.RowStyles.Add(new RowStyle());
         tlpEditor.RowStyles.Add(new RowStyle());
         tlpEditor.RowStyles.Add(new RowStyle());
         tlpEditor.RowStyles.Add(new RowStyle());
@@ -223,23 +294,42 @@ partial class AnaForm
         txtBaslik.TabIndex = 1;
         txtBaslik.TextChanged += Editor_Degisti;
         //
+        // lblKategori
+        //
+        lblKategori.AutoSize = true;
+        lblKategori.Location = new Point(3, 44);
+        lblKategori.Name = "lblKategori";
+        lblKategori.Size = new Size(51, 15);
+        lblKategori.TabIndex = 2;
+        lblKategori.Text = "Kategori";
+        //
+        // cmbKategori
+        //
+        cmbKategori.Location = new Point(3, 62);
+        cmbKategori.FormattingEnabled = true;
+        cmbKategori.MaxLength = 50;
+        cmbKategori.Name = "cmbKategori";
+        cmbKategori.Size = new Size(220, 23);
+        cmbKategori.TabIndex = 3;
+        cmbKategori.TextChanged += Editor_Degisti;
+        //
         // lblIcerik
         //
         lblIcerik.AutoSize = true;
-        lblIcerik.Location = new Point(3, 44);
+        lblIcerik.Location = new Point(3, 88);
         lblIcerik.Name = "lblIcerik";
         lblIcerik.Size = new Size(36, 15);
-        lblIcerik.TabIndex = 2;
+        lblIcerik.TabIndex = 4;
         lblIcerik.Text = "İçerik";
         //
         // rtbIcerik
         //
         rtbIcerik.AcceptsTab = true;
         rtbIcerik.Dock = DockStyle.Fill;
-        rtbIcerik.Location = new Point(3, 62);
+        rtbIcerik.Location = new Point(3, 106);
         rtbIcerik.Name = "rtbIcerik";
-        rtbIcerik.Size = new Size(658, 420);
-        rtbIcerik.TabIndex = 3;
+        rtbIcerik.Size = new Size(658, 376);
+        rtbIcerik.TabIndex = 5;
         rtbIcerik.Text = "";
         rtbIcerik.TextChanged += Editor_Degisti;
         //
@@ -252,7 +342,7 @@ partial class AnaForm
         flpTarihler.Location = new Point(3, 488);
         flpTarihler.Name = "flpTarihler";
         flpTarihler.Size = new Size(658, 15);
-        flpTarihler.TabIndex = 4;
+        flpTarihler.TabIndex = 6;
         //
         // lblOlusturma
         //
@@ -286,7 +376,7 @@ partial class AnaForm
         flpButonlar.Margin = new Padding(0);
         flpButonlar.Name = "flpButonlar";
         flpButonlar.Size = new Size(664, 41);
-        flpButonlar.TabIndex = 5;
+        flpButonlar.TabIndex = 7;
         //
         // btnYeni
         //
@@ -351,6 +441,8 @@ partial class AnaForm
         splAna.Panel2.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)splAna).EndInit();
         splAna.ResumeLayout(false);
+        tlpListe.ResumeLayout(false);
+        tlpListe.PerformLayout();
         tlpEditor.ResumeLayout(false);
         tlpEditor.PerformLayout();
         flpTarihler.ResumeLayout(false);
@@ -377,6 +469,13 @@ partial class AnaForm
     private ToolStripStatusLabel tslSonKayit;
     private SplitContainer splAna;
     private ListBox lstNotlar;
+    private TableLayoutPanel tlpListe;
+    private Label lblArama;
+    private TextBox txtArama;
+    private Label lblKategoriFiltre;
+    private ComboBox cmbKategoriFiltre;
+    private Label lblKategori;
+    private ComboBox cmbKategori;
     private TableLayoutPanel tlpEditor;
     private Label lblBaslik;
     private TextBox txtBaslik;

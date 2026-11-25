@@ -8,6 +8,9 @@ public class NotYoneticisi
 {
     private static readonly CompareInfo TurkceKarsilastirma = new CultureInfo("tr-TR").CompareInfo;
 
+    private static readonly StringComparer TurkceEsitlik = StringComparer.Create(new CultureInfo("tr-TR"), ignoreCase: true);
+    private static readonly string[] HazirKategoriler = { Not.VarsayilanKategori, "Ders", "İş", "Kişisel" };
+
     private readonly List<Not> _notlar = new();
     private readonly INotDeposu _depo;
     private bool _yuklemeBasarili;
@@ -97,7 +100,7 @@ public class NotYoneticisi
     {
         string aranan = metin.Trim();
         return _notlar
-            .Where(n => kategori is null || MetinEsit(n.Kategori, kategori))
+            .Where(n => kategori is null || TurkceEsitlik.Equals(n.Kategori, kategori))
             .Where(n => Icerir(n.Baslik, aranan) || Icerir(n.Icerik, aranan))
             .OrderByDescending(n => n.DuzenlemeTarihi)
             .ToList();
@@ -106,11 +109,12 @@ public class NotYoneticisi
     /// <summary>Listenin kopyasını döndürür; dışarıdan asıl liste değiştirilemez.</summary>
     public List<Not> Tumu() => new(_notlar);
 
+    /// <summary>Hazır kategorileri ve notlarda kullanılan diğer kategorileri döndürür.</summary>
+    public List<string> Kategoriler() =>
+        HazirKategoriler.Concat(_notlar.Select(n => n.Kategori)).Distinct(TurkceEsitlik).ToList();
+
     private static bool Icerir(string kaynak, string aranan) =>
         TurkceKarsilastirma.IndexOf(kaynak, aranan, CompareOptions.IgnoreCase) >= 0;
-
-    private static bool MetinEsit(string a, string b) =>
-        TurkceKarsilastirma.Compare(a, b, CompareOptions.IgnoreCase) == 0;
 
     private void DegisikligiBildir()
     {
