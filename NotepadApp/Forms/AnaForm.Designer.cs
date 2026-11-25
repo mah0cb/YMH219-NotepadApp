@@ -322,7 +322,7 @@ partial class AnaForm
         StartPosition = FormStartPosition.CenterScreen;
         Text = "Not Defteri";
         FormClosing += AnaForm_FormClosing;
-        Load += AnaForm_Load;
+        Shown += AnaForm_Shown;
         mnuAna.ResumeLayout(false);
         mnuAna.PerformLayout();
         stsDurum.ResumeLayout(false);

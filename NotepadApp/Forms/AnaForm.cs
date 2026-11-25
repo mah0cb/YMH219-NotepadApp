@@ -22,10 +22,11 @@ public partial class AnaForm : Form
         _yonetici.NotlarDegisti += Yonetici_NotlarDegisti;
     }
 
-    private void AnaForm_Load(object? sender, EventArgs e)
+    private void AnaForm_Shown(object? sender, EventArgs e)
     {
         tslDosyaYolu.Text = _yonetici.DosyaYolu;
         EditoruDoldur(null);
+        Activate();
         NotlariYukle();
     }
 
